@@ -2,7 +2,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import {
-  getFirestore, collection, addDoc, getDocs, deleteDoc, doc
+  getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const config = {
@@ -36,6 +36,7 @@ const filterArea = document.getElementById("filterArea");
 
 let isBendahara = false;
 let kasData = [];
+let editingId = null;
 
 const chart = new Chart(grafikKas, {
   type: 'bar',
@@ -82,9 +83,21 @@ formKas.addEventListener("submit", async (e) => {
     keterangan: document.getElementById("keterangan").value,
     kategori: document.getElementById("kategori").value
   };
-  await addDoc(collection(db, "kas"), data);
-  formKas.reset();
-  loadDataKas();
+
+  try {
+    if (editingId) {
+      await updateDoc(doc(db, "kas", editingId), data);
+      alert("Transaksi diperbarui.");
+      editingId = null;
+    } else {
+      await addDoc(collection(db, "kas"), data);
+      alert("Transaksi ditambahkan.");
+    }
+    formKas.reset();
+    loadDataKas();
+  } catch (err) {
+    alert("Gagal menyimpan: " + err.message);
+  }
 });
 
 async function loadDataKas() {
@@ -111,7 +124,9 @@ function renderTable() {
       <td>${k.tanggal}</td><td>${k.nama}</td><td>${k.tipe}</td>
       <td>Rp ${k.jumlah.toLocaleString()}</td>
       <td>${k.keterangan}</td><td>${k.kategori}</td>
-      <td>${isBendahara ? `<button onclick="hapusTransaksi('${k.id}')">Hapus</button>` : ''}</td>
+      <td>
+        ${isBendahara ? `<button onclick="editKas('${k.id}')">Edit</button> <button onclick="hapusTransaksi('${k.id}')">Hapus</button>` : ''}
+      </td>
     </tr>`;
   }).join('');
 
@@ -125,6 +140,19 @@ async function hapusTransaksi(id) {
   if (!confirm("Yakin hapus?")) return;
   await deleteDoc(doc(db, "kas", id));
   loadDataKas();
+}
+
+function editKas(id) {
+  const item = kasData.find(k => k.id === id);
+  if (!item) return;
+  document.getElementById("nama").value = item.nama;
+  document.getElementById("tanggal").value = item.tanggal;
+  document.getElementById("tipe").value = item.tipe;
+  document.getElementById("jumlah").value = item.jumlah;
+  document.getElementById("keterangan").value = item.keterangan;
+  document.getElementById("kategori").value = item.kategori;
+  editingId = id;
+  formKas.scrollIntoView({ behavior: 'smooth' });
 }
 
 function updateChart(data) {
@@ -167,6 +195,5 @@ document.getElementById('toggleTheme').addEventListener('click', () => {
 });
 
 window.addEventListener('DOMContentLoaded', () => {
-  loadDataKas(); // otomatis muat kas saat halaman dibuka
+  loadDataKas();
 });
-
