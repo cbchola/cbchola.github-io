@@ -197,3 +197,27 @@ document.getElementById('toggleTheme').addEventListener('click', () => {
 window.addEventListener('DOMContentLoaded', () => {
   loadDataKas();
 });
+
+function tampilkanBelumBayar() {
+  const daftarAnggota = [
+    "GUFRON", "IMAN", "ARDI", "FHAISAL", "RIKI", "BINTANG", "ILZAM", "DEVI", "ROZAK", "BAGONG",
+    "JOKO", "FIRDAUS", "NYOT", "SAHRONI", "ERIK", "BRED", "PETOK", "ANTOK", "ABBY", "WILDAN", "AKBAR"
+  ];
+  const pesanMotivasi = [
+    "Yuk, bagi yang belum menyetor kas, mari lengkapi kewajiban kita bersama. Sedikit dari kita, besar untuk kebersamaan!",
+    "Kas bukan sekadar iuran, tapi wujud komitmen dan kebersamaan keluarga CB CHOLA. Saling jaga, saling bantu, saling kuat!",
+    "CB CHOLA bukan hanya nama, tapi semangat satu hati. Mari terus tumbuh, berdaya, dan solid!",
+    "Yang belum sempat bayar bulan ini, yuk semangat! Kita semua pernah sibuk, tapi bareng-bareng kita bisa saling kuatkan."
+  ];
+  const pesan = pesanMotivasi[Math.floor(Math.random() * pesanMotivasi.length)];
+  const bayarBulan = filterBulan.value;
+  const yangSudah = new Set(kas.filter(k => k.tipe === 'Masuk' && (!bayarBulan || k.tanggal.startsWith(bayarBulan))).map(k => k.nama.toUpperCase()));
+  const belum = daftarAnggota.filter(n => !yangSudah.has(n));
+  const container = document.getElementById('belumBayar');
+  container.innerHTML = `<h3>Belum Bayar ${bayarBulan ? '(' + bayarBulan + ')' : ''}</h3><ul>` +
+    belum.map(n => `<li>${n}</li>`).join('') + '</ul>' +
+    `<div style="margin-top:10px;padding:10px;background:var(--card);border-left:4px solid var(--red);">
+      <strong>Pesan Semangat:</strong>
+      <p style=\"margin:5px 0 0\">"${pesan}"</p>
+    </div>`;
+}
