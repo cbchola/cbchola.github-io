@@ -165,3 +165,8 @@ filterNama.addEventListener("input", renderTable);
 document.getElementById('toggleTheme').addEventListener('click', () => {
   document.body.classList.toggle('dark-mode');
 });
+
+window.addEventListener('DOMContentLoaded', () => {
+  loadDataKas(); // otomatis muat kas saat halaman dibuka
+});
+
