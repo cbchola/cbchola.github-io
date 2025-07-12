@@ -1,0 +1,21 @@
+{
+  "name": "CB CHOLA Kas",
+  "short_name": "CHOLA Kas",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#EC3237",
+  "description": "Aplikasi kas organisasi CB CHOLA",
+  "icons": [
+    {
+      "src": "https://iili.io/FGSEGxs.jpg",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://iili.io/FGSEGxs.jpg",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
