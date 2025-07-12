@@ -46,3 +46,17 @@ self.pesanMotivasi = [
   "Yuk kita saling mengingatkan. Bukan karena lupa, tapi karena peduli. Waktunya setor kas!",
   "Jangan tunggu nanti. Sedikit hari ini untuk kekuatan besar esok hari. Setor kas yuk!"
 ];
+
+// Placeholder untuk aksi edit & hapus (client side only)
+self.actions = {
+  editKas: function (id, updatedData) {
+    // Firestore update example:
+    // return updateDoc(doc(db, "kas", id), updatedData);
+    console.log("Edit Kas:", id, updatedData);
+  },
+  hapusKas: function (id) {
+    // Firestore delete example:
+    // return deleteDoc(doc(db, "kas", id));
+    console.log("Hapus Kas:", id);
+  }
+};
