@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CB CHOLA Kas</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    :root {
+      --black: #000000;
+      --dark: #020300;
+      --red: #EC3237;
+      --gray: #CDCDCC;
+      --gray-dark: #4D4D4B;
+      --bg: var(--black);
+      --text: var(--gray);
+      --card: var(--gray-dark);
+    }
+
+    
+    
+
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: 0.3s;
+    }
+
+    header {
+      background: var(--dark);
+      color: var(--red);
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    main {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      padding: 15px;
+      flex: 1;
+      min-width: 250px;
+      border-left: 5px solid var(--red);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0 10px;
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--gray);
+    }
+
+    button {
+      padding: 8px 12px;
+      background: var(--red);
+      color: white;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: 0.2s ease;
+      border-radius: 8px;
+    }
+
+    button:hover {
+      filter: brightness(1.1);
+      transform: scale(1.02);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: var(--card);
+    }
+
+    th, td {
+      border: 1px solid var(--gray);
+      padding: 8px;
+    }
+
+    th {
+      background: var(--gray-dark);
+      color: white;
+    }
+
+    canvas {
+      margin-top: 10px;
+    }
+
+    #anggotaTotals {
+      margin-top: 20px;
+      background: var(--card);
+      padding: 15px;
+    }
+      @font-face {
+      font-family: 'ff_normal';
+      src: url('https://fftools2018.github.io/index/assets/ffnormal.ttf') format('truetype');
+    }
+    @font-face {
+      font-family: 'ff_bold';
+      src: url('https://fftools2018.github.io/index/assets/ffbold.ttf') format('truetype');
+      font-weight: bold;
+    }
+    body {
+      font-family: 'ff_normal', sans-serif;
+    }
+      @media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --text: #CDCDCC;
+    --card: #1a1a1a;
+  }
+}
+      @media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --text: #CDCDCC;
+    --card: #1a1a1a;
+  }
+}
+
+    .error {
+      border: 1px solid red;
+      background-color: #ffe6e6;
+    }
+      :root {
+      --bg: #ffffff;
+      --text: #000000;
+      --card: #f4f4f4;
+      --red: #EC3237;
+      --gray: #CDCDCC;
+      --dark: #000000;
+    }
+
+    @media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --text: #CDCDCC;
+    --card: #1a1a1a;
+  }
+}
+
+    .error {
+      border: 1px solid red;
+      background-color: #ffe6e6;
+    }
+  </style>
+  <script type="application/manifest+json" id="inline-manifest">
+{
+  "name": "CB CHOLA Kas",
+  "short_name": "Kas CB",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#EC3237",
+  "icons": [
+    {
+      "src": "https://iili.io/FGSEGxs.jpg",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
+function tampilkanBelumBayar() {
+  const daftarAnggota = [
+    "GUFRON", "IMAN", "ARDI", "FHAISAL", "RIKI", "BINTANG", "ILZAM", "DEVI", "ROZAK", "BAGONG",
+    "JOKO", "FIRDAUS", "NYOT", "SAHRONI", "ERIK", "BRED", "PETOK", "ANTOK", "ABBY", "WILDAN", "AKBAR"
+  ];
+  const pesanMotivasi = [
+    "Yuk, bagi yang belum menyetor kas, mari lengkapi kewajiban kita bersama. Sedikit dari kita, besar untuk kebersamaan!",
+    "Kas bukan sekadar iuran, tapi wujud komitmen dan kebersamaan keluarga CB CHOLA. Saling jaga, saling bantu, saling kuat!",
+    "CB CHOLA bukan hanya nama, tapi semangat satu hati. Mari terus tumbuh, berdaya, dan solid!",
+    "Yang belum sempat bayar bulan ini, yuk semangat! Kita semua pernah sibuk, tapi bareng-bareng kita bisa saling kuatkan."
+  ];
+  const pesan = pesanMotivasi[Math.floor(Math.random() * pesanMotivasi.length)];
+  const bayarBulan = filterBulan.value;
+  const yangSudah = new Set(kas.filter(k => k.tipe === 'Masuk' && (!bayarBulan || k.tanggal.startsWith(bayarBulan))).map(k => k.nama.toUpperCase()));
+  const belum = daftarAnggota.filter(n => !yangSudah.has(n));
+  const container = document.getElementById('belumBayar');
+  container.innerHTML = `<h3>Belum Bayar ${bayarBulan ? '(' + bayarBulan + ')' : ''}</h3><ul>` +
+    belum.map(n => `<li>${n}</li>`).join('') + '</ul>' +
+    `<div style="margin-top:10px;padding:10px;background:var(--card);border-left:4px solid var(--red);">
+      <strong>Pesan Semangat:</strong>
+      <p style=\"margin:5px 0 0\">"${pesan}"</p>
+    </div>`;
+}
+</script>
+<script>
+  document.getElementById('searchInput').addEventListener('input', function () {
+    const query = this.value.toLowerCase();
+    const filtered = kas.filter(k => {
+      return (
+        k.nama.toLowerCase().includes(query) ||
+        k.keterangan.toLowerCase().includes(query) ||
+        k.kategori.toLowerCase().includes(query) ||
+        k.tipe.toLowerCase().includes(query)
+      );
+    });
+    renderTable(filtered);
+  });
+
+  function exportJSON() {
+    const blob = new Blob([JSON.stringify(kas)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'kas_backup.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function importJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (Array.isArray(data)) {
+          kas = data;
+          localStorage.setItem('kasOrganisasi', JSON.stringify(kas));
+          renderTable();
+          alert('Data berhasil di-restore');
+        }
+      } catch (err) {
+        alert('File tidak valid');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+function loadData() {
+  db.collection("kas").get()
+    .then(snapshot => {
+      kas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderTable();
+    });
+}
+
+
+
+</script>
+  <meta name="theme-color" content="#EC3237">
+</head>
+<body>
+  <header>
+    <div style="display:flex;align-items:center;gap:10px">
+      <img src="https://iili.io/FGSEGxs.jpg" alt="Logo" />
+      <h1 style="margin:0;font-size:1.3em">CB CHOLA Kas</h1>
+    </div>
+    <button id="toggleTheme"><span class="material-icons">dark_mode</span></button>
+  </header>
+
+<div id="loginDialog">
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
+
+
+
+  <main>
+    <div class="summary">
+      <div class="card"><h3>Masuk</h3><p id="masuk">Rp 0</p></div>
+      <div class="card"><h3>Keluar</h3><p id="keluar">Rp 0</p></div>
+      <div class="card"><h3>Saldo</h3><p id="saldo">Rp 0</p></div>
+    </div>
+
+    <canvas id="grafikKas" height="100"></canvas>
+
+    <h2>Tambah Transaksi</h2>
+    <form id="formKas">
+      <select id="tipe">
+        <option value="Masuk">Masuk</option>
+        <option value="Keluar">Keluar</option>
+      </select>
+      <input type="text" id="nama" list="daftarAnggota" placeholder="Nama Anggota" required>
+<datalist id="daftarAnggota">
+  <option value="GUFRON"><option value="IMAN"><option value="ARDI"><option value="FHAISAL">
+  <option value="RIKI"><option value="BINTANG"><option value="ILZAM"><option value="DEVI">
+  <option value="ROZAK"><option value="BAGONG"><option value="JOKO"><option value="FIRDAUS">
+  <option value="NYOT"><option value="SAHRONI"><option value="ERIK"><option value="BRED">
+  <option value="PETOK"><option value="ANTOK"><option value="ABBY"><option value="WILDAN">
+  <option value="AKBAR">
+</datalist>
+      <input type="date" id="tanggal" required>
+      <input type="number" id="jumlah" placeholder="Jumlah (Rp)" required>
+      <input type="text" id="keterangan" placeholder="Keterangan">
+      <select id="kategori">
+        <option value="">Pilih Kategori</option>
+        <option value="Kas">Kas</option>
+        <option value="Donasi">Donasi</option>
+        <option value="Operasional">Operasional</option>
+        <option value="Lainnya">Lainnya</option>
+      </select>
+      <button type="submit"><span class="material-icons">add_circle</span> Simpan</button>
+    </form>
+
+    <div style="margin: 1em 0; display:flex; flex-wrap:wrap; gap:8px">
+      <input type="text" id="searchInput" placeholder="Cari transaksi..." style="flex:1;min-width:200px;padding:6px">
+      <button onclick="exportJSON()">Backup JSON</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
+      <button onclick="document.getElementById('importFile').click()">Restore JSON</button>
+    </div>
+
+    <div style="margin-top: 15px;">
+      <input type="month" id="filterBulan">
+      <select id="filterNama"></select>
+      <button id="exportExcel"><span class="material-icons">upload_file</span> Ekspor Excel</button>
+      <button id="hapusSemua"><span class="material-icons">delete_sweep</span> Hapus</button>
+      <button id="printPDF"><span class="material-icons">print</span> Cetak PDF</button>
+    </div>
+
+    <h3>Transaksi</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Tanggal</th><th>Nama</th><th>Tipe</th><th>Jumlah</th><th>Keterangan</th><th>Kategori</th><th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody id="tabelGabungan"></tbody>
+</table>
+
+    <div id="anggotaTotals"><div id="belumBayar" style="margin-top: 20px;"></div>
+</div>
+</main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDeKvLsBqZ-kXIcopKyqkqQnBFc4PD_wE0",
+  authDomain: "cbchola-kas.firebaseapp.com",
+  projectId: "cbchola-kas",
+  storageBucket: "cbchola-kas.firebasestorage.app",
+  messagingSenderId: "988391521907",
+  appId: "1:988391521907:web:4b681dd787af12894b7406",
+  measurementId: "G-FGYCSME62E"
+};
+
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+
+</script>
+<script>
+function login() {
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+
+  auth.signInWithEmailAndPassword(email, password)
+    .then(user => {
+      alert("Login berhasil sebagai " + user.user.email);
+      // Sembunyikan login dan tampilkan UI bendahara jika perlu
+    })
+    .catch(err => alert("Login gagal: " + err.message));
+}
+
+
+</script>
+
+
+<script>
+  function formatRupiah(n) {
+    return "Rp " + parseInt(n).toLocaleString("id-ID");
+  }
+
+  const form = document.getElementById('formKas');
+  const tabelGabungan = document.getElementById('tabelGabungan');
+  const masuk = document.getElementById('masuk');
+  const keluar = document.getElementById('keluar');
+  const saldo = document.getElementById('saldo');
+  const filterBulan = document.getElementById('filterBulan');
+  const filterNama = document.getElementById('filterNama');
+  const grafikCanvas = document.getElementById('grafikKas').getContext('2d');
+  const anggotaTotals = document.getElementById('anggotaTotals');
+
+  let kas = JSON.parse(localStorage.getItem('kasOrganisasi')) || [];
+  let editIndex = null;
+
+  const chart = new Chart(grafikCanvas, {
+    type: 'bar',
+    data: {
+      labels: [],
+      datasets: [
+        { label: 'Masuk', data: [], backgroundColor: '#22c55e' },
+        { label: 'Keluar', data: [], backgroundColor: '#ef4444' }
+      ]
+    },
+    options: {
+      animation: {
+        duration: 1000,
+        easing: 'easeOutQuart'
+      },
+      responsive: true,
+      plugins: {
+        legend: {
+          labels: {
+            color: getComputedStyle(document.body).getPropertyValue('--text')
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: getComputedStyle(document.body).getPropertyValue('--text')
+          }
+        },
+        y: {
+          ticks: {
+            color: getComputedStyle(document.body).getPropertyValue('--text')
+          }
+        }
+      }
+    }
+  });
+
+  function simpan() {
+    localStorage.setItem('kasOrganisasi', JSON.stringify(kas));
+    function saveData(data) {
+  db.collection("kas").add(data)
+    .then(() => {
+      alert("Data berhasil disimpan");
+    })
+    .catch(error => {
+      console.error("Gagal simpan:", error);
+    });
+}
+
+  }
+
+function updateFilterNama() {
+  const daftarAnggota = [
+    "GUFRON", "IMAN", "ARDI", "FHAISAL", "RIKI", "BINTANG", "ILZAM", "DEVI", "ROZAK", "BAGONG",
+    "JOKO", "FIRDAUS", "NYOT", "SAHRONI", "ERIK", "BRED", "PETOK", "ANTOK", "ABBY", "WILDAN", "AKBAR"
+  ];
+  filterNama.innerHTML = '<option value="">Semua Nama</option>' +
+    daftarAnggota.map(n => `<option value="${n}">${n}</option>`).join('');
+}
+
+  
+  function hitungTotalPerAnggota(data) {
+    const summary = {};
+    data.forEach(k => {
+      if (!summary[k.nama]) summary[k.nama] = { masuk: 0, keluar: 0 };
+      if (k.tipe === 'Masuk') summary[k.nama].masuk += parseInt(k.jumlah);
+      else summary[k.nama].keluar += parseInt(k.jumlah);
+    });
+    const masukGlobal = kas.filter(k => k.tipe === 'Masuk').reduce((a, b) => a + parseInt(b.jumlah), 0);
+const keluarGlobal = kas.filter(k => k.tipe === 'Keluar').reduce((a, b) => a + parseInt(b.jumlah), 0);
+const globalSaldo = masukGlobal - keluarGlobal;
+
+const pesanMotivasi = [
+  "Yuk, bagi yang belum menyetor kas, mari lengkapi kewajiban kita bersama. Sedikit dari kita, besar untuk kebersamaan!",
+  "Kas bukan sekadar iuran, tapi wujud komitmen dan kebersamaan keluarga CB CHOLA. Saling jaga, saling bantu, saling kuat!",
+  "CB CHOLA bukan hanya nama, tapi semangat satu hati. Mari terus tumbuh, berdaya, dan solid!",
+  "Yang belum sempat bayar bulan ini, yuk semangat! Kita semua pernah sibuk, tapi bareng-bareng kita bisa saling kuatkan.",
+  "Kita kuat karena saling melengkapi. Yuk, yang belum sempat bayar, mari lanjutkan semangat kebersamaan kita!",
+  "Iuran kas bukan beban, tapi bentuk dukungan untuk kebaikan bersama. Semangat terus keluarga CB CHOLA!",
+  "Sedikit dari masing-masing kita, besar manfaatnya untuk semua. Kasih support yuk, biar makin solid!",
+  "Bersama kita bisa lebih baik. Jangan biarkan satu pun tertinggal. Ayo lengkapi iuran kas bulan ini!",
+  "CB CHOLA bukan sekadar nama, tapi komitmen. Yuk jaga kekompakan, satukan langkah!",
+  "Kebersamaan dimulai dari hal kecil. Kas kita, semangat kita, kekuatan kita!",
+  "Yuk kita saling mengingatkan. Bukan karena lupa, tapi karena peduli. Waktunya setor kas!",
+  "Jangan tunggu nanti. Sedikit hari ini untuk kekuatan besar esok hari. Setor kas yuk!"
+];
+
+const motivasi = pesanMotivasi[Math.floor(Math.random() * pesanMotivasi.length)];
+
+anggotaTotals.innerHTML += `
+  <div style="margin-top:20px;padding:12px;background:var(--card);border-left:4px solid var(--red);border-radius:6px">
+    <strong>Pesan Semangat:</strong>
+    <p style="margin:5px 0 0">${motivasi}</p>
+  </div>`;
+
+
+
+
+anggotaTotals.innerHTML = '<h3>Total per Anggota</h3>' + `
+  <div style="margin-top:20px;padding:12px;background:var(--card);border-left:4px solid var(--red);border-radius:6px">
+    <strong>Pesan :</strong>
+    <p style="margin:5px 0 0">${motivasi}</p>
+  </div>` + '<ul>' + Object.entries(summary).map(([nama, t]) =>
+    `<li><strong>${nama}</strong>: Masuk ${formatRupiah(t.masuk)}</li>`
+  ).join('') +
+  `<li><strong>Pengeluaran (global)</strong>: ${formatRupiah(keluarGlobal)}</li>` +
+  `<li><strong>Total Saldo</strong>: ${formatRupiah(globalSaldo)}</li>` +
+  '</ul>';
+  }
+
+  function renderTable() {
+    const bulan = filterBulan.value;
+    const nama = filterNama.value;
+    const filtered = kas.filter(k => {
+      return (!bulan || k.tanggal.startsWith(bulan)) && (!nama || k.nama === nama);
+    });
+
+    tabelGabungan.innerHTML = '';
+    let totalMasuk = 0, totalKeluar = 0;
+
+    filtered.forEach((item, index) => {
+  let tr = document.createElement('tr');
+  tr.innerHTML = `<td>${item.tanggal}</td><td>${item.nama}</td><td>${item.tipe}</td><td>${formatRupiah(item.jumlah)}</td><td>${item.keterangan}</td><td>${item.kategori || '-'}</td>
+    <td><button onclick="editData(${index})"><span class='material-icons'>edit</span></button> <button onclick="hapusData(${index})"><span class='material-icons'>delete</span></button></td>`;
+  tabelGabungan.appendChild(tr);
+  if (item.tipe === 'Masuk') totalMasuk += parseInt(item.jumlah);
+  else totalKeluar += parseInt(item.jumlah);
+});
+
+    masuk.textContent = formatRupiah(totalMasuk);
+    keluar.textContent = formatRupiah(totalKeluar);
+    saldo.textContent = formatRupiah(totalMasuk - totalKeluar);
+    updateChart(filtered);
+    hitungTotalPerAnggota(filtered);
+    updateFilterNama();
+    tampilkanBelumBayar();
+    hitungTotalPerAnggota(filtered);
+    updateFilterNama();
+  }
+
+  function updateChart(data) {
+    const bulan = {};
+    data.forEach(i => {
+      const key = i.tanggal.slice(0, 7);
+      if (!bulan[key]) bulan[key] = { Masuk: 0, Keluar: 0 };
+      bulan[key][i.tipe] += parseInt(i.jumlah);
+    });
+    const labels = Object.keys(bulan).sort();
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = labels.map(b => bulan[b].Masuk);
+    chart.data.datasets[1].data = labels.map(b => bulan[b].Keluar);
+    chart.update();
+  }
+
+  function editData(index) {
+    const item = kas[index];
+    document.getElementById('nama').value = item.nama;
+    document.getElementById('tanggal').value = item.tanggal;
+    document.getElementById('tipe').value = item.tipe;
+    document.getElementById('jumlah').value = item.jumlah;
+    document.getElementById('keterangan').value = item.keterangan;
+    kas.splice(index, 1);
+    editIndex = index;
+    simpan();
+    renderTable();
+  }
+
+  function hapusData(index) {
+    if (confirm("Hapus transaksi ini?")) {
+      kas.splice(index, 1);
+      simpan();
+      renderTable();
+    }
+  }
+
+  form.addEventListener('submit', (e) => {
+    const daftarAnggota = [
+      "GUFRON", "IMAN", "ARDI", "FHAISAL", "RIKI", "BINTANG", "ILZAM", "DEVI", "ROZAK", "BAGONG",
+      "JOKO", "FIRDAUS", "NYOT", "SAHRONI", "ERIK", "BRED", "PETOK", "ANTOK", "ABBY", "WILDAN", "AKBAR"
+    ];
+    const namaInput = document.getElementById('nama').value;
+    if (!daftarAnggota.includes(namaInput.toUpperCase())) {
+      alert('Nama harus sesuai daftar anggota.');
+      return;
+    }
+    e.preventDefault();
+    const jumlahField = document.getElementById('jumlah');
+const kategoriField = document.getElementById('kategori');
+if (parseInt(jumlahField.value) <= 0) {
+  jumlahField.classList.add('error');
+  alert('Jumlah tidak boleh nol atau negatif');
+  return;
+} else {
+  jumlahField.classList.remove('error');
+}
+if (!kategoriField.value) {
+  kategoriField.classList.add('error');
+  alert('Pilih kategori terlebih dahulu');
+  return;
+} else {
+  kategoriField.classList.remove('error');
+}
+const data = {
+  nama: document.getElementById('nama').value,
+  tanggal: document.getElementById('tanggal').value,
+  tipe: document.getElementById('tipe').value,
+  jumlah: document.getElementById('jumlah').value,
+  keterangan: document.getElementById('keterangan').value,
+  kategori: kategoriField.value
+};
+    kas.push(data);
+    simpan();
+    renderTable();
+    form.reset();
+  });
+
+  filterBulan.addEventListener('change', renderTable);
+  filterNama.addEventListener('change', renderTable);
+
+  document.getElementById('exportExcel').addEventListener('click', () => {
+    const ws = XLSX.utils.json_to_sheet(kas);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Kas");
+    XLSX.writeFile(wb, "kas_organisasi.xlsx");
+  });
+
+  document.getElementById('hapusSemua').addEventListener('click', () => {
+    if (confirm("Hapus semua data?")) {
+      kas = [];
+      simpan();
+      renderTable();
+    }
+  });
+
+  document.getElementById('printPDF').addEventListener('click', () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.text("Laporan Kas Organisasi", 20, 10);
+    doc.autoTable({
+      head: [["Tanggal", "Nama", "Tipe", "Jumlah", "Keterangan", "Kategori"]],
+      body: kas.map(k => [k.tanggal, k.nama, k.tipe, formatRupiah(k.jumlah), k.keterangan, k.kategori])
+    });
+    doc.save('laporan_kas.pdf');
+  });
+
+  document.getElementById('toggleTheme').addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+  });
+
+  renderTable();
+</script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('data:application/javascript;base64,' + btoa(`self.addEventListener('install',e=>{e.waitUntil(caches.open('cbchola-kas').then(c=>c.addAll(['./'])))});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))}));`)
+        .then(reg => console.log('Service Worker registered:', reg))
+        .catch(err => console.error('Service Worker error:', err)));}
+    
+  </script>
+</body>
+</html>
